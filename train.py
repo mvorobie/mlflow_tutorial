@@ -30,9 +30,10 @@ def eval_metrics(actual, pred):
 
 def load_csv() -> pd.DataFrame:
     #  Read the wine-quality csv file from the URL
-    csv_url = "http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"
+    #  csv_url = "http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"
+    csv_url = "winequality-red.csv"
     try:
-        return pd.read_csv(csv_url, sep=";")
+        return pd.read_csv(csv_url) #, sep=";")
     except Exception as e:
         logger.exception(
             f"Unable to download training & test CSV, check your internet connection. Error: {e}"
@@ -58,6 +59,8 @@ if __name__ == "__main__":
     np.random.seed(40)
     data = load_csv()
     if not data.empty:
+        if "Unnamed: 0" in data.columns:  # Quick fix for loading csv with indexes as separate column
+            data = data.drop(["Unnamed: 0"], axis=1)
         train_x, test_x, train_y, test_y = split_data(data)
 
         alpha = float(sys.argv[1]) if len(sys.argv) > 1 else 0.5
